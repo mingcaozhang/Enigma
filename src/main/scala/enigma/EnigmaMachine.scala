@@ -2,12 +2,20 @@ package enigma
 
 import scala.annotation.tailrec
 
+object EnigmaMachine {
+  def apply(
+    startRotor: Rotor,
+    rotorSettings: RotorSettings = RotorSettings('A', 'A', 'A')
+  ): EnigmaMachine = new EnigmaMachine(startRotor, rotorSettings)
+}
+
 class EnigmaMachine(
   startRotor: Rotor,
   rotorSettings: RotorSettings = RotorSettings('A', 'A', 'A')
 ) {
   setRotorSettings(rotorSettings)
 
+  def encrypt(s: String): String = s map encrypt
   def encrypt(char: Char): Char = {
     startRotor.increment()
     encryptRecursively(char, startRotor, reverse = false)

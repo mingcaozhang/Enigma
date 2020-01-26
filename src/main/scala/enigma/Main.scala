@@ -15,7 +15,7 @@ object Main extends App {
     case other    => throw new IllegalStateException(s"Expected rotor, got $other")
   }
   val rotorSettings: RotorSettings = RotorSettings('B', 'B', 'B')
-  val enigmaMachine = new EnigmaMachine(startRotor, rotorSettings)
+  val enigmaMachine = EnigmaMachine(startRotor, rotorSettings)
 
   val encrypted = (0 to 100).map { _ =>
     enigmaMachine.encrypt('A')
