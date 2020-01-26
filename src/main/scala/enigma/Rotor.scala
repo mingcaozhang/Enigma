@@ -3,18 +3,24 @@ package enigma
 import enigma.utils.CharUtils.CharExtensions
 import enigma.utils.{Constants, Mapping}
 
+object Rotor {
+  def apply(sequence: Array[Char]) = new Rotor(sequence)
+}
+
 class Rotor(protected val sequence: Array[Char]) extends Transformer {
   private var rotatingMappings: Array[Mapping] = defaultMappings
   private var position: Int = Constants.DEFAULT_POSITION
   private var previousPosition: Int = Constants.DEFAULT_POSITION
 
-  var next: Option[Transformer] = None
-  var prev: Option[Transformer] = None
+  private[enigma] var next: Option[Transformer] = None
+  private[enigma] var prev: Option[Transformer] = None
 
-  def reset(): Unit = {
+  def setSetting(setting: Char): Unit = {
+    val offset = setting - 'A'
     rotatingMappings = defaultMappings
     position = Constants.DEFAULT_POSITION
     previousPosition = Constants.DEFAULT_POSITION
+    if (offset > 0) (0 to offset) foreach (_ => increment())
   }
 
   def increment(): Unit = {
@@ -27,8 +33,12 @@ class Rotor(protected val sequence: Array[Char]) extends Transformer {
     previousPosition = (previousPosition + 1) % Constants.ALPHA_COUNT
   }
 
-  override def transform(c: Char, mappingsToUse: Array[Mapping]): Char =
+  private[enigma] override def transform(c: Char,
+                                         mappingsToUse: Array[Mapping]): Char =
     super.transform(c, rotatingMappings)
-  override def reverseTransform(c: Char, mappingsToUse: Array[Mapping]): Char =
+  private[enigma] override def reverseTransform(
+    c: Char,
+    mappingsToUse: Array[Mapping]
+  ): Char =
     super.reverseTransform(c, rotatingMappings)
 }

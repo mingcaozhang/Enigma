@@ -1,29 +1,30 @@
 package enigma
 
-import enigma.utils.RotorConstants
+import enigma.utils.RotorConstants._
 
 object Main extends App {
-
-  val reflector: Reflector = new Reflector(RotorConstants.B_Reflector_Sequence)
-  val leftRotor: Rotor = new Rotor(RotorConstants.Rotor_I_Sequence)
-  val centerRotor: Rotor = new Rotor(RotorConstants.Rotor_II_Sequence)
-  val rightRotor: Rotor = new Rotor(RotorConstants.Rotor_III_Sequence)
-
-  val transformers: List[Transformer] =
-    List(rightRotor, centerRotor, leftRotor, reflector)
-
-  Transformers.wireUp(transformers)
-
-  val enigmaMachine =
-    new EnigmaMachine(leftRotor, centerRotor, rightRotor, rightRotor, reflector)
+  val transformers =
+    List(
+      Rotor(Rotor_III_Sequence),
+      Rotor(Rotor_II_Sequence),
+      Rotor(Rotor_I_Sequence),
+      Reflector(B_Reflector_Sequence)
+    )
+  val startRotor: Rotor = Transformers.wireUp(transformers) match {
+    case r: Rotor => r
+    case other    => throw new IllegalStateException(s"Expected rotor, got $other")
+  }
+  val rotorSettings: RotorSettings = RotorSettings('B', 'B', 'B')
+  val enigmaMachine = new EnigmaMachine(startRotor, rotorSettings)
 
   val encrypted = (0 to 100).map { _ =>
     enigmaMachine.encrypt('A')
   }.mkString
 
-  enigmaMachine.setRotorSettings(RotorSettings('A', 'A', 'A'))
+  enigmaMachine.setRotorSettings(rotorSettings)
   val decrypted =
-    "BDZGOWCXLTKSBTMCDLPBMFEBOXYHCXTGYJFLINHNXSHIUNTUQOFXPQPKOVHCBUBTZSZSOOSTGHEORODBBZZLXLCYZXIFGWFDZEEOT"
+//    "BDZGOWCXLTKSBTMCDLPBMFEBOXYHCXTGYJFLINHNXSHIUNTUQOFXPQPKOVHCBUBTZSZSOOSTGHEORODBBZZLXLCYZXIFGWFDZEEOT"
+    "IGQQKOMBOYOUVGDHTCORRIENHHDCOVQZBVBBFSPQQONXTEEWKHTCKNSTUMEOWLZJJVNGYIBYBDUQSQPEUGJRCXZWPFYIYYBWLJLQL"
       .map(c => enigmaMachine.encrypt(c))
       .mkString
 
