@@ -1,4 +1,4 @@
-name := "EnigmaMachine"
+name := "enigma.EnigmaMachine"
 
 version := "0.1"
 
