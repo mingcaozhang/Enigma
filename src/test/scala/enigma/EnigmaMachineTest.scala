@@ -27,6 +27,12 @@ class EnigmaMachineTest extends FlatSpec {
     assert(enigmaMachine.encrypt("AAAAA") == "IGQQK")
   }
 
+  it should "encrypt a repeated sequence such that the encrypted message has no repetitions" in {
+    val rotorSettings: RotorSettings = RotorSettings('A', 'A', 'A')
+    enigmaMachine.setRotorSettings(rotorSettings)
+    assert(enigmaMachine.encrypt("AAAAA") != enigmaMachine.encrypt("AAAAA"))
+  }
+
   it should "decrypt outputs given the rotor settings for the input" in {
     val rotorSettings: RotorSettings = RotorSettings('B', 'B', 'B')
     enigmaMachine.setRotorSettings(rotorSettings)

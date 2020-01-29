@@ -15,6 +15,10 @@ class EnigmaMachine(
 ) {
   setRotorSettings(rotorSettings)
 
+  def startLoop(): Unit = {
+    while (true) {}
+  }
+
   def encrypt(s: String): String = s map encrypt
   def encrypt(char: Char): Char = {
     startRotor.increment()
