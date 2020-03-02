@@ -42,8 +42,9 @@ class EnigmaMachine private(
       char
     }
     else {
+      val res = encryptRecursively(char, startRotor, reverse = false)
       startRotor.increment()
-      encryptRecursively(char, startRotor, reverse = false)
+      res
     }
   }
 

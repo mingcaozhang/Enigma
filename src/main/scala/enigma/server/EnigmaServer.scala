@@ -37,7 +37,7 @@ trait EnigmaServer extends CorsSupport{
             _ match {
               case Success(encrypted) =>
                 logger.info(
-                  s"Encrypted input: ${req.text} with RotorSettings: [${req.right},${req.center},${req.left}]"
+                  s"Encrypted input: ${req.text} with RotorSettings: [${req.left},${req.center},${req.right}]. Output: $encrypted"
                 )
                 complete(StatusCodes.OK, encrypted)
               case Failure(_) =>

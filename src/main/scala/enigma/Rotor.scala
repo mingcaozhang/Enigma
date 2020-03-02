@@ -20,7 +20,7 @@ class Rotor(protected val sequence: Array[Char]) extends Transformer {
     rotatingMappings = defaultMappings
     position = Constants.DEFAULT_POSITION
     previousPosition = Constants.DEFAULT_POSITION
-    if (offset > 0) (0 to offset) foreach (_ => increment())
+    if (offset > 0) for (_ <- 0 until offset) increment
   }
 
   def increment(): Unit = {
