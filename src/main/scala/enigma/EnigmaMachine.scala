@@ -38,8 +38,13 @@ class EnigmaMachine private(
 
   private def encrypt(s: String): String = s map encrypt
   private def encrypt(char: Char): Char = {
-    startRotor.increment()
-    encryptRecursively(char, startRotor, reverse = false)
+    if (char.isWhitespace) {
+      char
+    }
+    else {
+      startRotor.increment()
+      encryptRecursively(char, startRotor, reverse = false)
+    }
   }
 
   @tailrec
