@@ -1,26 +1,43 @@
 package enigma
 
 import scala.annotation.tailrec
+import enigma.utils.RotorConstants._
 
 object EnigmaMachine {
-  def apply(
+  val Instance = {
+    val transformers =
+      List(
+        Rotor(Rotor_III_Sequence),
+        Rotor(Rotor_II_Sequence),
+        Rotor(Rotor_I_Sequence),
+        Reflector(B_Reflector_Sequence)
+      )
+    val startRotor: Rotor = Transformers.wireUp(transformers) match {
+      case r: Rotor => r
+      case other    => throw new IllegalStateException(s"Expected rotor, got $other")
+    }
+    EnigmaMachine(startRotor)
+  }
+
+  private def apply(
     startRotor: Rotor,
     rotorSettings: RotorSettings = RotorSettings('A', 'A', 'A')
   ): EnigmaMachine = new EnigmaMachine(startRotor, rotorSettings)
 }
 
-class EnigmaMachine(
+class EnigmaMachine private(
   startRotor: Rotor,
   rotorSettings: RotorSettings = RotorSettings('A', 'A', 'A')
 ) {
   setRotorSettings(rotorSettings)
 
-  def startLoop(): Unit = {
-    while (true) {}
+  def acceptRequest(request: EncryptionRequest): String = {
+    setRotorSettings(RotorSettings(request.right, request.center, request.left))
+    encrypt(request.text.toUpperCase)
   }
 
-  def encrypt(s: String): String = s map encrypt
-  def encrypt(char: Char): Char = {
+  private def encrypt(s: String): String = s map encrypt
+  private def encrypt(char: Char): Char = {
     startRotor.increment()
     encryptRecursively(char, startRotor, reverse = false)
   }
@@ -58,7 +75,7 @@ class EnigmaMachine(
     }
   }
 
-  def setRotorSettings(settings: RotorSettings): Unit =
+  private def setRotorSettings(settings: RotorSettings): Unit =
     resetRecursively(startRotor, settings.list)
 }
 

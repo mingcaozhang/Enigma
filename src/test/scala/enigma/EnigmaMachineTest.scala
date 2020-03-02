@@ -1,41 +1,22 @@
 package enigma
 
-import enigma.utils.RotorConstants.{
-  B_Reflector_Sequence,
-  Rotor_III_Sequence,
-  Rotor_II_Sequence,
-  Rotor_I_Sequence
-}
 import org.scalatest.FlatSpec
 class EnigmaMachineTest extends FlatSpec {
-  val transformers =
-    List(
-      Rotor(Rotor_III_Sequence),
-      Rotor(Rotor_II_Sequence),
-      Rotor(Rotor_I_Sequence),
-      Reflector(B_Reflector_Sequence)
-    )
-  val startRotor: Rotor = Transformers.wireUp(transformers) match {
-    case r: Rotor => r
-    case other    => throw new IllegalStateException(s"Expected rotor, got $other")
-  }
-  val enigmaMachine = EnigmaMachine(startRotor)
+  val enigmaMachine = EnigmaMachine.Instance
 
   "An Enigma Machine" should "encrypt inputs deterministically given some rotor settings" in {
-    val rotorSettings: RotorSettings = RotorSettings('B', 'B', 'B')
-    enigmaMachine.setRotorSettings(rotorSettings)
-    assert(enigmaMachine.encrypt("AAAAA") == "IGQQK")
+    val encrypted = enigmaMachine.acceptRequest(EncryptionRequest("AAAAA", 'B', 'B', 'B'))
+    assert(encrypted == "IGQQK")
   }
 
   it should "encrypt a repeated sequence such that the encrypted message has no repetitions" in {
-    val rotorSettings: RotorSettings = RotorSettings('A', 'A', 'A')
-    enigmaMachine.setRotorSettings(rotorSettings)
-    assert(enigmaMachine.encrypt("AAAAA") != enigmaMachine.encrypt("AAAAA"))
+    val encrypted = enigmaMachine.acceptRequest(EncryptionRequest("AAAAA", 'A', 'A', 'A'))
+//    val encryptedTwice = enigmaMachine.acceptRequest()
+//    assert(enigmaMachine.encrypt("AAAAA") != enigmaMachine.encrypt("AAAAA"))
   }
 
   it should "decrypt outputs given the rotor settings for the input" in {
-    val rotorSettings: RotorSettings = RotorSettings('B', 'B', 'B')
-    enigmaMachine.setRotorSettings(rotorSettings)
-    assert(enigmaMachine.encrypt("IGQQK") == "AAAAA")
+    val encrypted = enigmaMachine.acceptRequest(EncryptionRequest("IGQQK", 'B', 'B', 'B'))
+    assert(encrypted == "AAAAA")
   }
 }
